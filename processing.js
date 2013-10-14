@@ -2098,12 +2098,10 @@
         projection,
         manipulatingCamera = false,
         frustumMode = false,
-        // XXX(jeresig)
-        cameraFOV = (p.angleMode === "degrees" ? 60 : p.radians(60)),
+        cameraFOV = 60 * (Math.PI / 180),
         cameraX = p.width / 2,
         cameraY = p.height / 2,
-        // XXX(jeresig)
-        cameraZ = cameraY / p.tan(cameraFOV / 2),
+        cameraZ = cameraY / Math.tan(cameraFOV / 2),
         cameraNear = cameraZ / 10,
         cameraFar = cameraZ * 10,
         cameraAspect = p.width / p.height;
@@ -9893,6 +9891,11 @@
     * @see radians
     */
     p.tan = compose(p.convertToRadians, Math.tan);
+
+    // XXX(jeresig): Need to set these globals later as they
+    // use the new methods.
+    cameraFOV = (p.angleMode === "degrees" ? 60 : p.radians(60));
+    cameraZ = cameraY / p.tan(cameraFOV / 2);
 
     var currentRandom = Math.random;
 
