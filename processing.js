@@ -17202,7 +17202,8 @@
         attachEventHandler(curElement, "touchstart", function(e) {
           updateMousePosition(curElement, e.touches[0]);
 
-          p.__mousePressed = true;
+          // XXX(jeresig): Added mouseIsPressed/keyIsPressed
+          p.mouseIsPressed = p.__mousePressed = true;
           p.mouseDragging = false;
           p.mouseButton = PConstants.LEFT;
 
@@ -17227,7 +17228,8 @@
 
         // Emulated touch up/mouse up event
         attachEventHandler(curElement, "touchend", function(e) {
-          p.__mousePressed = false;
+          // XXX(jeresig): Added mouseIsPressed/keyIsPressed
+          p.mouseIsPressed = p.__mousePressed = false;
 
           if (typeof p.mouseClicked === "function" && !p.mouseDragging) {
             p.mouseClicked();
@@ -17292,7 +17294,8 @@
     });
 
     attachEventHandler(curElement, "mousedown", function(e) {
-      p.__mousePressed = true;
+      // XXX(jeresig): Added mouseIsPressed/keyIsPressed
+      p.mouseIsPressed = p.__mousePressed = true;
       p.mouseDragging = false;
       switch (e.which) {
       case 1:
@@ -17312,7 +17315,8 @@
     });
 
     attachEventHandler(curElement, "mouseup", function(e) {
-      p.__mousePressed = false;
+      // XXX(jeresig): Added mouseIsPressed/keyIsPressed
+      p.mouseIsPressed = p.__mousePressed = false;
 
       if (typeof p.mouseClicked === "function" && !p.mouseDragging) {
         p.mouseClicked();
@@ -17407,15 +17411,18 @@
       var ch;
       for (ch in pressedKeysMap) {
         if (pressedKeysMap.hasOwnProperty(ch)) {
-          p.__keyPressed = true;
+          // XXX(jeresig): Added mouseIsPressed/keyIsPressed
+          p.keyIsPressed = p.__keyPressed = true;
           return;
         }
       }
-      p.__keyPressed = false;
+      // XXX(jeresig): Added mouseIsPressed/keyIsPressed
+      p.keyIsPressed = p.__keyPressed = false;
     }
 
     function resetKeyPressed() {
-      p.__keyPressed = false;
+      // XXX(jeresig): Added mouseIsPressed/keyIsPressed
+      p.keyIsPressed = p.__keyPressed = false;
       pressedKeysMap = [];
       lastPressedKeyCode = null;
     }
@@ -17681,6 +17688,8 @@
       "triangle", "trim", "unbinary", "unhex", "updatePixels", "use3DContext",
       "vertex", "width", "XMLElement", "year", "__contains", "__equals",
       "__equalsIgnoreCase", "__frameRate", "__hashCode", "__int_cast",
+      // XXX(jeresig): Added mouseIsPressed/keyIsPressed
+      "mouseIsPressed", "keyIsPressed",
       "__instanceof", "__keyPressed", "__mousePressed", "__printStackTrace",
       "__replace", "__replaceAll", "__replaceFirst", "__toCharArray", "__split",
       "__codePointAt", "__startsWith", "__endsWith"];
