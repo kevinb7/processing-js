@@ -1096,7 +1096,8 @@
     };
 
     PVector.angleBetween = function(v1, v2) {
-      return Math.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
+      // XXX(jeresig)
+      return p.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
     };
 
     // Common vector operations for PVector
@@ -1198,7 +1199,8 @@
         }
       },
       heading2D: function() {
-        return (-Math.atan2(-this.y, this.x));
+        // XXX(jeresig)
+        return -p.atan2(-this.y, this.x);
       },
       toString: function() {
         return "[" + this.x + ", " + this.y + ", " + this.z + "]";
@@ -1951,6 +1953,9 @@
     p.width           = 100;
     p.height          = 100;
 
+    // XXX(jeresig)
+    p.angleMode = "radians";
+
     // "Private" variables used to maintain state
     var curContext,
         curSketch,
@@ -2093,10 +2098,12 @@
         projection,
         manipulatingCamera = false,
         frustumMode = false,
-        cameraFOV = 60 * (Math.PI / 180),
+        // XXX(jeresig)
+        cameraFOV = (p.angleMode === "degrees" ? 60 : p.radians(60)),
         cameraX = p.width / 2,
         cameraY = p.height / 2,
-        cameraZ = cameraY / Math.tan(cameraFOV / 2),
+        // XXX(jeresig)
+        cameraZ = cameraY / p.tan(cameraFOV / 2),
         cameraNear = cameraZ / 10,
         cameraFar = cameraZ * 10,
         cameraAspect = p.width / p.height;
@@ -3604,10 +3611,12 @@
           } else if (pieces[i].indexOf("rotate") !== -1) {
             var angle = m[0];
             if (m.length === 1) {
-              this.matrix.rotate(p.radians(angle));
+              // XXX(jeresig)
+              this.matrix.rotate(p.angleMode === "degrees" ? angle: p.radians(angle));
             } else if (m.length === 3) {
               this.matrix.translate(m[1], m[2]);
-              this.matrix.rotate(p.radians(m[0]));
+              // XXX(jeresig)
+              this.matrix.rotate(p.angleMode === "degrees" ? m[0] : p.radians(m[0]));
               this.matrix.translate(-m[1], -m[2]);
             }
           } else if (pieces[i].indexOf("skewX") !== -1) {
@@ -5786,8 +5795,9 @@
        * @param {float} angle         the angle of rotation in radiants
        */
       rotate: function(angle) {
-        var c = Math.cos(angle);
-        var s = Math.sin(angle);
+        // XXX(jeresig)
+        var c = p.cos(angle);
+        var s = p.sin(angle);
         var temp1 = this.elements[0];
         var temp2 = this.elements[1];
         this.elements[0] =  c * temp1 + s * temp2;
@@ -5813,7 +5823,8 @@
        * @param {float} angle         the angle of rotation in radiants
        */
       invRotateZ: function(angle) {
-        this.rotateZ(angle - Math.PI);
+        // XXX(jeresig)
+        this.rotateZ(angle - (p.angleMode === "degrees" ? 180 : Math.PI));
       },
       /**
        * @member PMatrix2D
@@ -6194,8 +6205,9 @@
        * @param {float} angle         the angle of rotation in radiants
        */
       rotateZ: function(angle) {
-        var c = Math.cos(angle);
-        var s = Math.sin(angle);
+        // XXX(jeresig)
+        var c = p.cos(angle);
+        var s = p.sin(angle);
         this.apply([c, -s, 0, 0, s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
       },
       /**
@@ -6237,7 +6249,8 @@
        * @param {float} angle  angle of skew specified in radians
        */
       skewX: function(angle) {
-        var t = Math.tan(angle);
+        // XXX(jeresig)
+        var t = p.tan(angle);
         this.apply(1, t, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
       },
       /**
@@ -6248,7 +6261,8 @@
        * @param {float} angle  angle of skew specified in radians
        */
       skewY: function(angle) {
-        var t = Math.tan(angle);
+        // XXX(jeresig)
+        var t = p.tan(angle);
         this.apply(1, 0, 0, 0, t, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
       },
       multX: function(x, y, z, w) {
@@ -6379,18 +6393,21 @@
         this.preApply(1, 0, 0, -tx, 0, 1, 0, -ty, 0, 0, 1, -tz, 0, 0, 0, 1);
       },
       invRotateX: function(angle) {
-        var c = Math.cos(-angle);
-        var s = Math.sin(-angle);
+        // XXX(jeresig)
+        var c = p.cos(-angle);
+        var s = p.sin(-angle);
         this.preApply([1, 0, 0, 0, 0, c, -s, 0, 0, s, c, 0, 0, 0, 0, 1]);
       },
       invRotateY: function(angle) {
-        var c = Math.cos(-angle);
-        var s = Math.sin(-angle);
+        // XXX(jeresig)
+        var c = p.cos(-angle);
+        var s = p.sin(-angle);
         this.preApply([c, 0, s, 0, 0, 1, 0, 0, -s, 0, c, 0, 0, 0, 0, 1]);
       },
       invRotateZ: function(angle) {
-        var c = Math.cos(-angle);
-        var s = Math.sin(-angle);
+        // XXX(jeresig)
+        var c = p.cos(-angle);
+        var s = p.sin(-angle);
         this.preApply([c, -s, 0, 0, s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
       },
       invScale: function(x, y, z) {
@@ -7881,7 +7898,9 @@
     Drawing2D.prototype.rotate = function(angleInRadians) {
       modelView.rotateZ(angleInRadians);
       modelViewInv.invRotateZ(angleInRadians);
-      curContext.rotate(angleInRadians);
+      // XXX(jeresig): Note, angleInRadians may be in degrees
+      // depending upon the angleMode
+      curContext.rotate(p.convertToRadians(angleInRadians));
     };
 
     Drawing3D.prototype.rotate = function(angleInRadians) {
@@ -9722,6 +9741,32 @@
     p.sqrt = Math.sqrt;
 
     // Trigonometry
+    p.convertToDegrees = function(angle) {
+        return p.angleMode === "degrees" ?
+            p.degrees(angle) :
+            angle;
+    };
+
+    p.convertToRadians = function(angle) {
+        return p.angleMode === "degrees" ?
+            p.radians(angle) :
+            angle;
+    };
+
+    var compose = function() {
+        var args = arguments;
+
+        return function() {
+            var ret = arguments;
+
+            for (var i = 0; i < args.length; i++) {
+                ret = [ args[i].apply(args[i], ret) ];
+            }
+
+            return ret[0];
+        };
+    };
+
     /**
     * The inverse of cos(), returns the arc cosine of a value. This function expects the
     * values in the range of -1 to 1 and values are returned in the range 0 to PI (3.1415927).
@@ -9734,7 +9779,7 @@
     * @see asin
     * @see atan
     */
-    p.acos = Math.acos;
+    p.acos = compose(Math.acos, p.convertToDegrees);
 
     /**
     * The inverse of sin(), returns the arc sine of a value. This function expects the values
@@ -9748,7 +9793,7 @@
     * @see acos
     * @see atan
     */
-    p.asin = Math.asin;
+    p.asin = compose(Math.asin, p.convertToDegrees);
 
     /**
     * The inverse of tan(), returns the arc tangent of a value. This function expects the values
@@ -9762,7 +9807,7 @@
     * @see asin
     * @see acos
     */
-    p.atan = Math.atan;
+    p.atan = compose(Math.atan, p.convertToDegrees);
 
     /**
     * Calculates the angle (in radians) from a specified point to the coordinate origin as measured from
@@ -9777,7 +9822,7 @@
     *
     * @see tan
     */
-    p.atan2 = Math.atan2;
+    p.atan2 = compose(Math.atan2, p.convertToDegrees);
 
     /**
     * Calculates the cosine of an angle. This function expects the values of the angle parameter to be provided
@@ -9790,7 +9835,7 @@
     * @see tan
     * @see sin
     */
-    p.cos = Math.cos;
+    p.cos = compose(p.convertToRadians, Math.cos);
 
     /**
     * Converts a radian measurement to its corresponding value in degrees. Radians and degrees are two ways of
@@ -9833,7 +9878,7 @@
     * @see cos
     * @see radians
     */
-    p.sin = Math.sin;
+    p.sin = compose(p.convertToRadians, Math.sin);
 
     /**
     * Calculates the ratio of the sine and cosine of an angle. This function expects the values of the angle
@@ -9847,7 +9892,7 @@
     * @see sin
     * @see radians
     */
-    p.tan = Math.tan;
+    p.tan = compose(p.convertToRadians, Math.tan);
 
     var currentRandom = Math.random;
 
@@ -10165,8 +10210,9 @@
       p.externals.context = curContext;
 
       for (var i = 0; i < PConstants.SINCOS_LENGTH; i++) {
-        sinLUT[i] = p.sin(i * (PConstants.PI / 180) * 0.5);
-        cosLUT[i] = p.cos(i * (PConstants.PI / 180) * 0.5);
+        // XXX(jeresig)
+        sinLUT[i] = p.sin(p.angleMode === "degrees" ? i : p.radians(i));
+        cosLUT[i] = p.cos(p.angleMode === "degrees" ? i : p.radians(i));
       }
     };
 
@@ -10372,7 +10418,7 @@
       view.apply(modelView.array());
       view.mult(pos, pos);
 
-      // Instead of calling p.color, we do the calculations ourselves to 
+      // Instead of calling p.color, we do the calculations ourselves to
       // reduce property lookups.
       var col = color$4(r, g, b, 0);
       var normalizedCol = [ ((col & PConstants.RED_MASK) >>> 16) / 255,
@@ -10437,7 +10483,7 @@
         mvm[2] * nx + mvm[6] * ny + mvm[10] * nz
       ];
 
-      // Instead of calling p.color, we do the calculations ourselves to 
+      // Instead of calling p.color, we do the calculations ourselves to
       // reduce property lookups.
       var col = color$4(r, g, b, 0);
       var normalizedCol = [ ((col & PConstants.RED_MASK) >>> 16) / 255,
@@ -10507,7 +10553,7 @@
 
     Drawing3D.prototype.lightSpecular = function(r, g, b) {
 
-      // Instead of calling p.color, we do the calculations ourselves to 
+      // Instead of calling p.color, we do the calculations ourselves to
       // reduce property lookups.
       var col = color$4(r, g, b, 0);
       var normalizedCol = [ ((col & PConstants.RED_MASK) >>> 16) / 255,
@@ -10580,7 +10626,7 @@
       view.apply(modelView.array());
       view.mult(pos, pos);
 
-      // Instead of calling p.color, we do the calculations ourselves to 
+      // Instead of calling p.color, we do the calculations ourselves to
       // reduce property lookups.
       var col = color$4(r, g, b, 0);
       var normalizedCol = [ ((col & PConstants.RED_MASK) >>> 16) / 255,
@@ -10670,7 +10716,7 @@
           mvm[2] * nx + mvm[6] * ny + mvm[10] * nz
       ];
 
-      // Instead of calling p.color, we do the calculations ourselves to 
+      // Instead of calling p.color, we do the calculations ourselves to
       // reduce property lookups.
       var col = color$4(r, g, b, 0);
       var normalizedCol = [ ((col & PConstants.RED_MASK) >>> 16) / 255,
@@ -10766,10 +10812,11 @@
      */
     p.camera = function(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ) {
       if (eyeX === undef) {
-        // Workaround if createGraphics is used. 
+        // Workaround if createGraphics is used.
         cameraX = p.width / 2;
         cameraY = p.height / 2;
-        cameraZ = cameraY / Math.tan(cameraFOV / 2);
+        // XXX(jeresig)
+        cameraZ = cameraY / p.tan(cameraFOV / 2);
         eyeX = cameraX;
         eyeY = cameraY;
         eyeZ = cameraZ;
@@ -10831,7 +10878,8 @@
       if (arguments.length === 0) {
         //in case canvas is resized
         cameraY = curElement.height / 2;
-        cameraZ = cameraY / Math.tan(cameraFOV / 2);
+        // XXX(jeresig)
+        cameraZ = cameraY / p.tan(cameraFOV / 2);
         cameraNear = cameraZ / 10;
         cameraFar = cameraZ * 10;
         cameraAspect = p.width / p.height;
@@ -10842,7 +10890,8 @@
       }
 
       var yMax, yMin, xMax, xMin;
-      yMax = near * Math.tan(fov / 2);
+      // XXX(jeresig)
+      yMax = near * p.tan(fov / 2);
       yMin = -yMax;
       xMax = yMax * aspect;
       xMin = yMin * aspect;
@@ -13322,6 +13371,10 @@
     p.arc = function(x, y, width, height, start, stop) {
       if (width <= 0 || stop < start) { return; }
 
+      // XXX(jeresig)
+      start = p.convertToRadians(start);
+      stop = p.convertToRadians(stop);
+
       if (curEllipseMode === PConstants.CORNERS) {
         width = width - x;
         height = height - y;
@@ -13347,8 +13400,10 @@
       var vr = height / 2;
       var centerX = x + hr;
       var centerY = y + vr;
-      var startLUT = 0 | (-0.5 + start * p.RAD_TO_DEG * 2);
-      var stopLUT  = 0 | (0.5 + stop * p.RAD_TO_DEG * 2);
+      // XXX(jeresig): Removed * 2 from these lines
+      // seems to have been a mistake.
+      var startLUT = 0 | (-0.5 + start * p.RAD_TO_DEG);
+      var stopLUT = 0 | (0.5 + stop * p.RAD_TO_DEG);
       var i, j;
       if (doFill) {
         // shut off stroke for a minute
@@ -13695,7 +13750,7 @@
         br = tl;
         bl = tl;
       }
-      var halfWidth = width / 2, 
+      var halfWidth = width / 2,
           halfHeight = height / 2;
       if (tl > halfWidth || tl > halfHeight) {
         tl = Math.min(halfWidth, halfHeight);
@@ -16754,9 +16809,10 @@
 
               if (lastCom === "Q" || lastCom === "T") {
                 d = Math.sqrt(Math.pow(x - cx, 2) + Math.pow(cy - y, 2));
-                a = Math.PI + Math.atan2(cx - x, cy - y);
-                cx = x + (Math.sin(a) * (d));
-                cy = y + (Math.cos(a) * (d));
+                // XXX(jeresig)
+                a = (p.angleMode === "degrees" ? 180 : Math.PI) + p.atan2(cx - x, cy - y);
+                cx = x + p.sin(a) * d;
+                cy = y + p.cos(a) * d;
               } else {
                 cx = x;
                 cy = y;
