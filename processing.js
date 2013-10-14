@@ -14296,25 +14296,28 @@
         canvas.width = this.width;
         canvas.height = this.height;
 
-        var imageData = this.imageData = canvas.getContext('2d').createImageData(this.width, this.height);
+        //XXX(jeresig): Commenting out imageData stuff
+        //var imageData = this.imageData = canvas.getContext('2d').createImageData(this.width, this.height);
         this.format = (aFormat === PConstants.ARGB || aFormat === PConstants.ALPHA) ? aFormat : PConstants.RGB;
-        if (this.format === PConstants.RGB) {
+        //if (this.format === PConstants.RGB) {
           // Set the alpha channel of an RGB image to opaque.
-          for (var i = 3, data = this.imageData.data, len = data.length; i < len; i += 4) {
-            data[i] = 255;
-          }
-        }
+          //for (var i = 3, data = this.imageData.data, len = data.length; i < len; i += 4) {
+            //data[i] = 255;
+          //}
+        //}
 
-        this.__isDirty = true;
-        this.updatePixels();
+        //this.__isDirty = true;
+        //this.updatePixels();
       } else {
         this.width = 0;
         this.height = 0;
-        this.imageData = utilityContext2d.createImageData(1, 1);
+        //XXX(jeresig): Commenting out imageData stuff
+        //this.imageData = utilityContext2d.createImageData(1, 1);
         this.format = PConstants.ARGB;
       }
 
-      this.pixels = buildPixelsObject(this);
+      //XXX(jeresig): Commenting out imageData stuff
+      //this.pixels = buildPixelsObject(this);
     };
     PImage.prototype = {
 
@@ -14345,16 +14348,17 @@
       fromHTMLImageData: function(htmlImg) {
         // convert an <img> to a PImage
         var canvasData = getCanvasData(htmlImg);
-        try {
-          var imageData = canvasData.context.getImageData(0, 0, htmlImg.width, htmlImg.height);
-          this.fromImageData(imageData);
-        } catch(e) {
+        //XXX(jeresig): Commenting out imageData stuff
+        //try {
+          //var imageData = canvasData.context.getImageData(0, 0, htmlImg.width, htmlImg.height);
+          //this.fromImageData(imageData);
+        //} catch(e) {
           if (htmlImg.width && htmlImg.height) {
             this.isRemote = true;
             this.width = htmlImg.width;
             this.height = htmlImg.height;
           }
-        }
+        //}
         this.sourceImg = htmlImg;
       },
 
