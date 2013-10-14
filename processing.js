@@ -16694,6 +16694,10 @@
      * @see #textFont
      */
     p.text = function() {
+      //XXX(jeresig): Fix font constantly resetting
+      if (curContext.font !== curTextFont.css) {
+        curContext.font = curTextFont.css;
+      }
       if (textMode === PConstants.SHAPE) {
         // TODO: requires beginRaw function
         return;
