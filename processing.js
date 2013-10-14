@@ -1946,6 +1946,10 @@
     p.__keyPressed    = false;
     p.__frameRate     = 60;
 
+    // XXX(jeresig): Added mouseIsPressed/keyIsPressed
+    p.mouseIsPressed = false;
+    p.keyIsPressed = false;
+
     // The current animation frame
     p.frameCount      = 0;
 
