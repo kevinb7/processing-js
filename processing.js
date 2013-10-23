@@ -67,18 +67,18 @@
    * Using PConstants.* in code below is fine.  See tools/rewrite-pconstants.js.
    */
   var PConstants = {
-    // NOTE(jeresig): Disable X/Y/Z constants as they were confusing users.
+    // NOTE(jeresig): Disable some constants as they were confusing users.
     //X: 0,
     //Y: 1,
     //Z: 2,
 
-    R: 3,
-    G: 4,
-    B: 5,
-    A: 6,
+    //R: 3,
+    //G: 4,
+    //B: 5,
+    //A: 6,
 
-    U: 7,
-    V: 8,
+    //U: 7,
+    //V: 8,
 
     NX: 9,
     NY: 10,
