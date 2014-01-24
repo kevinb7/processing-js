@@ -17447,9 +17447,9 @@
 
     function handleKeydown(e) {
       var code = getKeyCode(e);
-      if (code === PConstants.DELETE) {
-        simulateKeyTyped(code, new Char(127));
-        return;
+      if (code === PConstants.DELETE || code === PConstants.BACKSPACE) {
+        simulateKeyTyped(code, new Char(code));
+        return suppressKeyEvent(e);
       }
       if (codedKeys.indexOf(code) < 0) {
         lastPressedKeyCode = code;
