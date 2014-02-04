@@ -1816,6 +1816,35 @@
         this.z = z || 0;
       }
 
+      PVector.fromAngle = function(angle, v) {
+        if (v === undef || v === null) {
+          v = new PVector();
+        }
+        // XXX(jeresig)
+        v.x = p.cos(angle);
+        v.y = p.sin(angle);
+        return v;
+      };
+
+      PVector.random2D = function(v) {
+        return PVector.fromAngle(Math.random() * 360, v);
+      };
+
+      PVector.random3D = function(v) {
+        var angle = Math.random() * 360;
+        var vz = Math.random() * 2 - 1;
+        var mult = Math.sqrt(1 - vz * vz);
+        // XXX(jeresig)
+        var vx = mult * p.cos(angle);
+        var vy = mult * p.sin(angle);
+        if (v === undef || v === null) {
+          v = new PVector(vx, vy, vz);
+        } else {
+          v.set(vx, vy, vz);
+        }
+        return v;
+      };
+
       PVector.dist = function(v1, v2) {
         return v1.dist(v2);
       };
@@ -1828,9 +1857,20 @@
         return v1.cross(v2);
       };
 
+      PVector.sub = function(v1, v2) {
+        return new PVector(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+      };
+
       PVector.angleBetween = function(v1, v2) {
         // XXX(jeresig)
         return p.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
+      };
+
+      PVector.lerp = function(v1, v2, amt) {
+        // non-static lerp mutates object, but this version returns a new vector
+        var retval = new PVector(v1.x, v1.y, v1.z);
+        retval.lerp(v2, amt);
+        return retval;
       };
 
       // Common vector operations for PVector
@@ -1854,6 +1894,24 @@
               y = this.y,
               z = this.z;
           return Math.sqrt(x * x + y * y + z * z);
+        },
+        magSq: function() {
+          var x = this.x,
+              y = this.y,
+              z = this.z;
+          return (x * x + y * y + z * z);
+        },
+        setMag: function(v_or_len, len) {
+          if (len === undef) {
+            len = v_or_len;
+            this.normalize();
+            this.mult(len);
+          } else {
+            var v = v_or_len;
+            v.normalize();
+            v.mult(len);
+            return v;
+          }
         },
         add: function(v, y, z) {
           if (arguments.length === 1) {
@@ -1899,6 +1957,13 @@
             this.z /= v.z;
           }
         },
+        rotate: function(angle) {
+          var prev_x = this.x;
+          var c = p.cos(angle);
+          var s = p.sin(angle);
+          this.x = c * this.x - s * this.y;
+          this.y = s * prev_x + c * this.y;
+        },
         dist: function(v) {
           var dx = this.x - v.x,
               dy = this.y - v.y,
@@ -1919,6 +1984,26 @@
                              z * v.x - v.z * x,
                              x * v.y - v.x * y);
         },
+        lerp: function(v_or_x, amt_or_y, z, amt) {
+          var lerp_val = function(start, stop, amt) {
+            return start + (stop - start) * amt;
+          };
+          var x, y;
+          if (arguments.length === 2) {
+            // given vector and amt
+            amt = amt_or_y;
+            x = v_or_x.x;
+            y = v_or_x.y;
+            z = v_or_x.z;
+          } else {
+            // given x, y, z and amt
+            x = v_or_x;
+            y = amt_or_y;
+          }
+          this.x = lerp_val(this.x, x, amt);
+          this.y = lerp_val(this.y, y, amt);
+          this.z = lerp_val(this.z, z, amt);
+        },
         normalize: function() {
           var m = this.mag();
           if (m > 0) {
@@ -1931,9 +2016,12 @@
             this.mult(high);
           }
         },
-        heading2D: function() {
+        heading: function() {
           // XXX(jeresig)
           return -p.atan2(-this.y, this.x);
+        },
+        heading2D: function() {
+          return this.heading();
         },
         toString: function() {
           return "[" + this.x + ", " + this.y + ", " + this.z + "]";
