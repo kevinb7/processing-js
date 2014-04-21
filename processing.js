@@ -2039,8 +2039,12 @@
         };
       }
 
+      // Create the static methods of PVector automatically
+      // We don't do toString because it causes a TypeError 
+      //  when attempting to stringify PVector
       for (var method in PVector.prototype) {
-        if (PVector.prototype.hasOwnProperty(method) && !PVector.hasOwnProperty(method)) {
+        if (PVector.prototype.hasOwnProperty(method) && !PVector.hasOwnProperty(method) &&
+              method !== "toString") {
           PVector[method] = createPVectorMethod(method);
         }
       }
