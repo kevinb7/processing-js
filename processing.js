@@ -19492,7 +19492,7 @@
         },
 
         view = doc.defaultView,
-          docElem = doc.documentElement,
+          docElem = doc.body || doc.documentElement,
           docElemStyle = docElem[$style],
 
         setStyles = function() {
