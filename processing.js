@@ -8253,6 +8253,13 @@
       pmouseYLastFrame = p.mouseY;
       p.pmouseX = pmouseXLastEvent;
       p.pmouseY = pmouseYLastEvent;
+
+      // Even if the user presses the mouse for less than the time of a single
+      // frame, we want mouseIsPressed to be true for a single frame when
+      // clicking, otherwise code that uses this boolean misses the click
+      // completely. (This is hard to reproduce on a real mouse, but easy on a
+      // trackpad with tap-to-click enabled.)
+      p.mouseIsPressed = p.__mousePressed;
     };
 
     Drawing3D.prototype.redraw = function() {
@@ -8281,6 +8288,8 @@
       pmouseYLastFrame = p.mouseY;
       p.pmouseX = pmouseXLastEvent;
       p.pmouseY = pmouseYLastEvent;
+      // (See comment about mouseIsPressed in Drawing2D.prototype.redraw)
+      p.mouseIsPressed = p.__mousePressed;
     };
 
     /**
@@ -17327,8 +17336,7 @@
 
         // Emulated touch up/mouse up event
         attachEventHandler(curElement, "touchend", function(e) {
-          // XXX(jeresig): Added mouseIsPressed/keyIsPressed
-          p.mouseIsPressed = p.__mousePressed = false;
+          p.__mousePressed = false;
 
           if (typeof p.mouseClicked === "function" && !p.mouseDragging) {
             p.mouseClicked();
@@ -17414,8 +17422,7 @@
     });
 
     attachEventHandler(curElement, "mouseup", function(e) {
-      // XXX(jeresig): Added mouseIsPressed/keyIsPressed
-      p.mouseIsPressed = p.__mousePressed = false;
+      p.__mousePressed = false;
 
       if (typeof p.mouseClicked === "function" && !p.mouseDragging) {
         p.mouseClicked();
