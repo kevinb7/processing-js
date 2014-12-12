@@ -2040,7 +2040,7 @@
       }
 
       // Create the static methods of PVector automatically
-      // We don't do toString because it causes a TypeError 
+      // We don't do toString because it causes a TypeError
       //  when attempting to stringify PVector
       for (var method in PVector.prototype) {
         if (PVector.prototype.hasOwnProperty(method) && !PVector.hasOwnProperty(method) &&
@@ -17545,7 +17545,7 @@
       p.key = c;
       p.keyCode = code;
       p.keyPressed();
-      p.keyCode = 0;
+      //p.keyCode = 0;  // the debugger sets this value before calling p.keyTyped
       p.keyTyped();
       updateKeyPressed();
     }
