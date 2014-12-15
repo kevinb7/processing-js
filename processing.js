@@ -9261,6 +9261,15 @@
       p.println("Exception: " + subject.toString() );
     };
 
+    /**
+     * Clears logs, if logger has been initialized
+     */
+    p._clearLogs = function() {
+      if (Processing.logger.clear) {
+        Processing.logger.clear();
+      }
+    };
+
     var logBuffer = [];
 
     /**
@@ -19677,6 +19686,11 @@
 
             append(entryText, createTextNode(message));
             output.scrollTop = output.scrollHeight;
+          };
+
+          tinylogLite.clear = function() {
+            messages = 0;
+            clearChildren(output);
           };
 
           tinylogLite[log](message);
