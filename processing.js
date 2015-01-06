@@ -17391,8 +17391,25 @@
       };
     }());
 
+    // updateMousePosition should only be called once per user event.
+    // When using the iframe-overlay this is not the case.
+    // If the user moves the mouse from a position outside the iframe
+    // to a position inside the iframe this counts as one user event.
+    // This one user event generates two mouse events "mouseover" followed
+    // by a "mousemove".  Unfortunately, both events have the same coordinates
+    // which causes (pmouseX, pmouseY) === (mouseX, mouseY) when the cursor
+    // re-enters the iframe which results in a gap in the line in the paint
+    // test program.  The reason why this bug ddoesn't appear when using just 
+    // the canvas is that the canvas doesn't get "mousemove" events which occur
+    // outside the canvas.
+    // TODO(kevinb7): verify that this solution works with just the canvas
+    var mouseOverOccurredFlag = false;
     attachEventHandler(curElement, "mousemove", function(e) {
-      updateMousePosition(curElement, e);
+      if (mouseOverOccurredFlag) {
+        mouseOverOccurredFlag = false;
+      } else {
+        updateMousePosition(curElement, e);
+      }
       if (typeof p.mouseMoved === "function" && !p.__mousePressed) {
         p.mouseMoved();
       }
@@ -17409,6 +17426,7 @@
     });
 
     attachEventHandler(curElement, "mouseover", function(e) {
+      mouseOverOccurredFlag = true;
       updateMousePosition(curElement, e);
       if (typeof p.mouseOver === "function") {
         p.mouseOver();
@@ -17554,7 +17572,16 @@
       p.key = c;
       p.keyCode = code;
       p.keyPressed();
-      p.keyCode = 0;
+      if (!p.__usingDebugger) {
+        p.keyCode = 0;
+        // When the debugger is in use all callbacks are queued and thus not
+        // run synchronously therefore, setting keyCode = 0; immediatedly as 
+        // it is without this check results keyCode being 0 when keyPressed()
+        // is finally run which is not the behaviour we want.
+        // The ProcessingDebugger sets keyCode to 0 right before it calls 
+        // keyTyped().
+        // https://github.com/kevinb7/stepper/blob/master/src/processing-debugger.ts#L41-L43
+      }
       p.keyTyped();
       updateKeyPressed();
     }
